@@ -1,47 +1,69 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import _ from 'lodash';
+import Chart from '../components/chart';
+import fetchWeather from '../actions';
+import GoogleMap from '../components/google-map';
+import '../main.css';
 
 class WeatherList extends Component {
   static get propTypes() {
     return {
-      weather: PropTypes.instanceOf(Object)
+      weather: PropTypes.instanceOf(Object),
+      fetchWeather: PropTypes.func
     };
   }
 
+  componentDidMount() {
+    const { fetchWeather } = this.props;
+    fetchWeather('Berdyansk');
+  }
+
   renderWeather = cityData => {
-    const { city } = cityData;
-    console.log(city);
+    const { city, list } = cityData;
+    const temps = _.map(list.map(weather => weather.main.temp), temp => temp - 273.15);
+    const humidity = list.map(weather => weather.main.humidity);
+    const { lon, lat } = city.coord;
+
     return (
-      <tr>
-        <td>{cityData.city.name}</td>
+      <tr key={city.id}>
+        <td>
+          <GoogleMap lng={lon} lat={lat} />
+        </td>
+        <td>{city.population}</td>
+        <td>
+          <Chart data={temps} units="°C" color="#FF5733" />
+        </td>
+        <td>
+          <Chart data={humidity} units="%" color="#212F3C" />
+        </td>
       </tr>
     );
   };
 
   render() {
-    const {
-      weather: { weather }
-    } = this.props;
+    const { weather } = this.props;
     console.log(weather);
     return (
       <table className="table table-hover">
         <thead>
           <tr>
             <th>City</th>
-            <th>Temperature</th>
-            <th>Pressure</th>
-            <th>Humidity</th>
+            <th>Population</th>
+            <th>Temperature (°C)</th>
+            <th>Humidity (%)</th>
           </tr>
         </thead>
-        {weather.length === undefined ? null : <tbody>{weather.map(this.renderWeather)}</tbody>}
+        <tbody>{!weather ? null : weather.map(this.renderWeather)}</tbody>
       </table>
     );
   }
 }
 
 WeatherList.defaultProps = {
-  weather: {}
+  weather: [],
+  fetchWeather: () => {}
 };
 
 const mapStateToProps = ({ weather }) => {
@@ -50,5 +72,5 @@ const mapStateToProps = ({ weather }) => {
 
 export default connect(
   mapStateToProps,
-  null
+  { fetchWeather }
 )(WeatherList);

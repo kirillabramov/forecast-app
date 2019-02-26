@@ -25,6 +25,7 @@ class SearchBar extends Component {
     const { fetchWeather } = this.props;
     const { term } = this.state;
     fetchWeather(term);
+    this.setState({ term: '' });
   };
 
   render() {
