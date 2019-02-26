@@ -44,7 +44,6 @@ class WeatherList extends Component {
 
   render() {
     const { weather } = this.props;
-    console.log(weather);
     return (
       <table className="table table-hover">
         <thead>
@@ -55,7 +54,7 @@ class WeatherList extends Component {
             <th>Humidity (%)</th>
           </tr>
         </thead>
-        <tbody>{!weather ? null : weather.map(this.renderWeather)}</tbody>
+        <tbody>{weather.map(this.renderWeather)}</tbody>
       </table>
     );
   }

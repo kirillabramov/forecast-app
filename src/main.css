@@ -26,3 +26,12 @@ form {
 .table {
     overflow-x: scroll;
 }
+.error-indicator{
+    width:100%;
+    text-align: center;
+    margin-top: 100px;
+}
+.error-indicator__title{
+    font-size: 18px;
+    color: #000;
+}
